@@ -1,8 +1,11 @@
 # SeedGermination
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?logo=apache&logoColor=white)
-![Python](https://img.shields.io/badge/python-3.11-blue)
+![Python](https://img.shields.io/badge/python-3.11-blue.svg?logo=python&logoColor=white)
 ![torch 2.6.0](https://img.shields.io/badge/torch-2.6.0-blue.svg?logo=pytorch&logoColor=white)
+![ai-edge-torch](https://img.shields.io/badge/ai--edge--torch-0.4.0-blue)
+![ai_edge_litert](https://img.shields.io/badge/ai__edge__litert-1.2.0-blue)
+![gcpds-cv-pykit](https://img.shields.io/badge/gcpds--cv--pykit-0.1.0.70-blue)
 
 A repository for seed germination detection and segmentation using deep learning models (UNet, ResUNet, DeepLabV3), optimized for deployment on Raspberry Pi 4 using LiteRT (TensorFlow Lite).
 
@@ -127,7 +130,7 @@ python "Testing on RP4/rpi4_benchmark.py" --model Weights/mobilenetv3_unet_dynam
 
 ## License
 
-This project is licensed under the BSD 2-Clause License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache 2 License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
