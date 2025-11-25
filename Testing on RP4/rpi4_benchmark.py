@@ -317,8 +317,8 @@ class RPi4Benchmark:
                   linewidth=2, label=f'95th percentile: {results["p95_time"]*1000:.2f} ms')
         
         ax.set_xlabel('Iteration', fontsize=12, fontweight='bold')
-        ax.set_ylabel('Inference Time (ms)', fontsize=12, fontweight='bold')
-        ax.set_title('Inference Time per Iteration', fontsize=14, fontweight='bold')
+        ax.set_ylabel('Inference time (ms)', fontsize=12, fontweight='bold')
+        ax.set_title('Inference time per iteration', fontsize=14, fontweight='bold')
         ax.legend(loc='best', fontsize=10)
         ax.grid(True, alpha=0.3, linestyle='--')
         
@@ -342,9 +342,9 @@ class RPi4Benchmark:
         ax.axvline(results['p95_time']*1000, color='orange', linestyle='--', 
                   linewidth=2.5, label=f'95th: {results["p95_time"]*1000:.2f} ms')
         
-        ax.set_xlabel('Inference Time (ms)', fontsize=12, fontweight='bold')
+        ax.set_xlabel('Inference time (ms)', fontsize=12, fontweight='bold')
         ax.set_ylabel('Frequency', fontsize=12, fontweight='bold')
-        ax.set_title('Distribution of Inference Times', fontsize=14, fontweight='bold')
+        ax.set_title('Distribution of inference times', fontsize=14, fontweight='bold')
         ax.legend(loc='best', fontsize=10)
         ax.grid(True, alpha=0.3, linestyle='--', axis='y')
         
@@ -382,15 +382,15 @@ class RPi4Benchmark:
                            results['cpu_usage'], alpha=0.3, color='purple')
             
             ax.set_xlabel('Iteration', fontsize=12, fontweight='bold')
-            ax.set_ylabel('CPU Usage (%)', fontsize=12, fontweight='bold')
-            ax.set_title('CPU Usage During Benchmark', fontsize=14, fontweight='bold')
+            ax.set_ylabel('CPU usage (%)', fontsize=12, fontweight='bold')
+            ax.set_title('CPU usage during benchmark', fontsize=14, fontweight='bold')
             ax.legend(loc='best', fontsize=10)
             ax.grid(True, alpha=0.3, linestyle='--')
             ax.set_ylim([0, 100])
             
             # Add statistics text box
             cpu_stats_text = (
-                f'CPU Statistics:\n'
+                f'CPU statistics:\n'
                 f'Mean: {results["mean_cpu"]:.1f}%\n'
                 f'Min: {np.min(results["cpu_usage"]):.1f}%\n'
                 f'Max: {np.max(results["cpu_usage"]):.1f}%\n'
@@ -426,13 +426,13 @@ class RPi4Benchmark:
             
             ax.set_xlabel('Iteration', fontsize=12, fontweight='bold')
             ax.set_ylabel('Temperature (°C)', fontsize=12, fontweight='bold')
-            ax.set_title('CPU Temperature During Benchmark', fontsize=14, fontweight='bold')
+            ax.set_title('CPU temperature during benchmark', fontsize=14, fontweight='bold')
             ax.legend(loc='best', fontsize=10)
             ax.grid(True, alpha=0.3, linestyle='--')
             
             # Add statistics text box
             temp_stats_text = (
-                f'Temperature Statistics:\n'
+                f'Temperature statistics:\n'
                 f'Mean: {results["mean_temp"]:.1f}°C\n'
                 f'Min: {np.min(results["cpu_temp"]):.1f}°C\n'
                 f'Max: {np.max(results["cpu_temp"]):.1f}°C\n'
@@ -451,8 +451,8 @@ class RPi4Benchmark:
         # ========================================================================
         # PLOT 5: Summary Dashboard (Combined Overview)
         # ========================================================================
-        fig = plt.figure(figsize=(12, 10))
-        gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
+        fig = plt.figure(figsize=(12, 12))  # Increased height from 10 to 12
+        gs = fig.add_gridspec(3, 2, hspace=0.45, wspace=0.3)  # Increased hspace from 0.3 to 0.45
         
         # Subplot 1: Inference time line plot
         ax1 = fig.add_subplot(gs[0, :])
@@ -460,7 +460,7 @@ class RPi4Benchmark:
         ax1.axhline(results['mean_time']*1000, color='red', linestyle='--', linewidth=2)
         ax1.set_xlabel('Iteration', fontsize=10)
         ax1.set_ylabel('Time (ms)', fontsize=10)
-        ax1.set_title('Inference Time per Iteration', fontsize=11, fontweight='bold')
+        ax1.set_title('Inference time per iteration', fontsize=11, fontweight='bold')
         ax1.grid(True, alpha=0.3)
         
         # Subplot 2: Histogram
@@ -495,7 +495,7 @@ class RPi4Benchmark:
         for i in range(2):
             table[(0, i)].set_facecolor('#4472C4')
             table[(0, i)].set_text_props(weight='bold', color='white')
-        ax3.set_title('Performance Statistics', fontsize=11, fontweight='bold', pad=20)
+        ax3.set_title('Performance statistics', fontsize=11, fontweight='bold', pad=20)
         
         # Subplot 4: CPU usage (if available)
         if results['cpu_usage']:
@@ -505,8 +505,8 @@ class RPi4Benchmark:
             ax4.fill_between(range(len(results['cpu_usage'])), 
                             results['cpu_usage'], alpha=0.3, color='purple')
             ax4.set_xlabel('Iteration', fontsize=10)
-            ax4.set_ylabel('CPU Usage (%)', fontsize=10)
-            ax4.set_title('CPU Usage', fontsize=11, fontweight='bold')
+            ax4.set_ylabel('CPU usage (%)', fontsize=10)
+            ax4.set_title('CPU usage', fontsize=11, fontweight='bold')
             ax4.grid(True, alpha=0.3)
             ax4.set_ylim([0, 100])
         
@@ -519,10 +519,10 @@ class RPi4Benchmark:
                             results['cpu_temp'], alpha=0.3, color='red')
             ax5.set_xlabel('Iteration', fontsize=10)
             ax5.set_ylabel('Temperature (°C)', fontsize=10)
-            ax5.set_title('CPU Temperature', fontsize=11, fontweight='bold')
+            ax5.set_title('CPU temperature', fontsize=11, fontweight='bold')
             ax5.grid(True, alpha=0.3)
         
-        plt.suptitle('Benchmark Summary Dashboard', fontsize=14, fontweight='bold', y=0.995)
+        plt.suptitle('Benchmark summary dashboard', fontsize=14, fontweight='bold', y=0.995)
         filename = f"{save_prefix}_summary_dashboard.pdf"
         plt.savefig(filename, format='pdf', dpi=300, bbox_inches='tight')
         saved_files.append(filename)
@@ -532,7 +532,7 @@ class RPi4Benchmark:
         # Print summary
         # ========================================================================
         print(f"\n{'='*70}")
-        print(" PDF PLOTS GENERATED ")
+        print(" PDF PLOTS GENERATED")
         print(f"{'='*70}")
         for i, file in enumerate(saved_files, 1):
             print(f"  {i}. {file}")
