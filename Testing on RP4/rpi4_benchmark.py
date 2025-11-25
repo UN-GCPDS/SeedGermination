@@ -283,97 +283,260 @@ class RPi4Benchmark:
         self, 
         results: Dict, 
         warmup_stats: Dict = None,
-        save_path: str = "benchmark_results.png"
+        save_prefix: str = "benchmark"
     ):
         """
-        Plot benchmark results
+        Plot benchmark results as individual PDF files at 300 DPI
         
         Args:
             results: Benchmark results dictionary
             warmup_stats: Warm-up statistics (optional)
-            save_path: Path to save plot
+            save_prefix: Prefix for output PDF files
         """
-        # Determine number of subplots
-        num_plots = 2  # Always have inference times and histogram
-        if results['cpu_usage']:
-            num_plots += 1
-        if results['cpu_temp']:
-            num_plots += 1
+        import matplotlib
+        matplotlib.use('Agg')  # Use non-interactive backend for better PDF rendering
         
-        fig, axes = plt.subplots(num_plots, 1, figsize=(12, 4*num_plots))
-        if num_plots == 1:
-            axes = [axes]
-        
-        plot_idx = 0
-        
-        # Plot 1: Inference times over iterations
-        ax = axes[plot_idx]
         inference_times_ms = np.array(results['inference_times']) * 1000
+        saved_files = []
+        
+        # ========================================================================
+        # PLOT 1: Inference Times Over Iterations
+        # ========================================================================
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
         
         if warmup_stats is not None:
             warmup_times_ms = np.array(warmup_stats['times']) * 1000
             ax.plot(range(-len(warmup_times_ms), 0), warmup_times_ms, 
-                   'o-', color='orange', alpha=0.6, label='Warm-up', markersize=3)
+                   'o-', color='orange', alpha=0.6, label='Warm-up', markersize=4)
         
         ax.plot(inference_times_ms, 'o-', color='blue', alpha=0.6, 
-               label='Benchmark', markersize=2)
+               label='Benchmark', markersize=3)
         ax.axhline(results['mean_time']*1000, color='red', linestyle='--', 
-                  label=f'Mean: {results["mean_time"]*1000:.2f} ms')
-        ax.axhline(results['p95_time']*1000, color='green', linestyle='--', 
-                  label=f'95th: {results["p95_time"]*1000:.2f} ms')
-        
-        ax.set_xlabel('Iteration')
-        ax.set_ylabel('Inference Time (ms)')
-        ax.set_title('Inference Time per Iteration')
-        ax.legend()
-        ax.grid(True, alpha=0.3)
-        plot_idx += 1
-        
-        # Plot 2: Histogram of inference times
-        ax = axes[plot_idx]
-        ax.hist(inference_times_ms, bins=50, color='blue', alpha=0.7, edgecolor='black')
-        ax.axvline(results['mean_time']*1000, color='red', linestyle='--', 
                   linewidth=2, label=f'Mean: {results["mean_time"]*1000:.2f} ms')
-        ax.axvline(results['median_time']*1000, color='green', linestyle='--', 
-                  linewidth=2, label=f'Median: {results["median_time"]*1000:.2f} ms')
-        ax.set_xlabel('Inference Time (ms)')
-        ax.set_ylabel('Frequency')
-        ax.set_title('Distribution of Inference Times')
-        ax.legend()
-        ax.grid(True, alpha=0.3)
-        plot_idx += 1
+        ax.axhline(results['p95_time']*1000, color='green', linestyle='--', 
+                  linewidth=2, label=f'95th percentile: {results["p95_time"]*1000:.2f} ms')
         
-        # Plot 3: CPU usage (if available)
-        if results['cpu_usage']:
-            ax = axes[plot_idx]
-            ax.plot(results['cpu_usage'], color='purple', alpha=0.7)
-            ax.axhline(results['mean_cpu'], color='red', linestyle='--', 
-                      label=f'Mean: {results["mean_cpu"]:.1f}%')
-            ax.set_xlabel('Iteration')
-            ax.set_ylabel('CPU Usage (%)')
-            ax.set_title('CPU Usage During Benchmark')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
-            ax.set_ylim([0, 100])
-            plot_idx += 1
-        
-        # Plot 4: CPU temperature (if available)
-        if results['cpu_temp']:
-            ax = axes[plot_idx]
-            ax.plot(results['cpu_temp'], color='red', alpha=0.7)
-            ax.axhline(results['mean_temp'], color='darkred', linestyle='--', 
-                      label=f'Mean: {results["mean_temp"]:.1f}°C')
-            ax.set_xlabel('Iteration')
-            ax.set_ylabel('Temperature (°C)')
-            ax.set_title('CPU Temperature During Benchmark')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
-            plot_idx += 1
+        ax.set_xlabel('Iteration', fontsize=12, fontweight='bold')
+        ax.set_ylabel('Inference Time (ms)', fontsize=12, fontweight='bold')
+        ax.set_title('Inference Time per Iteration', fontsize=14, fontweight='bold')
+        ax.legend(loc='best', fontsize=10)
+        ax.grid(True, alpha=0.3, linestyle='--')
         
         plt.tight_layout()
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
-        print(f"\n Plot saved to: {save_path}")
-        plt.show()
+        filename = f"{save_prefix}_inference_times.pdf"
+        plt.savefig(filename, format='pdf', dpi=300, bbox_inches='tight')
+        saved_files.append(filename)
+        plt.close(fig)
+        
+        # ========================================================================
+        # PLOT 2: Histogram of Inference Times
+        # ========================================================================
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        
+        n, bins, patches = ax.hist(inference_times_ms, bins=50, color='blue', 
+                                    alpha=0.7, edgecolor='black', linewidth=0.5)
+        ax.axvline(results['mean_time']*1000, color='red', linestyle='--', 
+                  linewidth=2.5, label=f'Mean: {results["mean_time"]*1000:.2f} ms')
+        ax.axvline(results['median_time']*1000, color='green', linestyle='--', 
+                  linewidth=2.5, label=f'Median: {results["median_time"]*1000:.2f} ms')
+        ax.axvline(results['p95_time']*1000, color='orange', linestyle='--', 
+                  linewidth=2.5, label=f'95th: {results["p95_time"]*1000:.2f} ms')
+        
+        ax.set_xlabel('Inference Time (ms)', fontsize=12, fontweight='bold')
+        ax.set_ylabel('Frequency', fontsize=12, fontweight='bold')
+        ax.set_title('Distribution of Inference Times', fontsize=14, fontweight='bold')
+        ax.legend(loc='best', fontsize=10)
+        ax.grid(True, alpha=0.3, linestyle='--', axis='y')
+        
+        # Add statistics text box
+        stats_text = (
+            f'Statistics:\n'
+            f'Mean: {results["mean_time"]*1000:.2f} ms\n'
+            f'Std: {results["std_time"]*1000:.2f} ms\n'
+            f'Min: {results["min_time"]*1000:.2f} ms\n'
+            f'Max: {results["max_time"]*1000:.2f} ms\n'
+            f'Median: {results["median_time"]*1000:.2f} ms'
+        )
+        ax.text(0.98, 0.97, stats_text, transform=ax.transAxes,
+               fontsize=9, verticalalignment='top', horizontalalignment='right',
+               bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+        
+        plt.tight_layout()
+        filename = f"{save_prefix}_histogram.pdf"
+        plt.savefig(filename, format='pdf', dpi=300, bbox_inches='tight')
+        saved_files.append(filename)
+        plt.close(fig)
+        
+        # ========================================================================
+        # PLOT 3: CPU Usage (if available)
+        # ========================================================================
+        if results['cpu_usage']:
+            fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+            
+            ax.plot(results['cpu_usage'], color='purple', alpha=0.7, linewidth=1.5)
+            ax.axhline(results['mean_cpu'], color='red', linestyle='--', 
+                      linewidth=2, label=f'Mean: {results["mean_cpu"]:.1f}%')
+            
+            # Add fill between for visual effect
+            ax.fill_between(range(len(results['cpu_usage'])), 
+                           results['cpu_usage'], alpha=0.3, color='purple')
+            
+            ax.set_xlabel('Iteration', fontsize=12, fontweight='bold')
+            ax.set_ylabel('CPU Usage (%)', fontsize=12, fontweight='bold')
+            ax.set_title('CPU Usage During Benchmark', fontsize=14, fontweight='bold')
+            ax.legend(loc='best', fontsize=10)
+            ax.grid(True, alpha=0.3, linestyle='--')
+            ax.set_ylim([0, 100])
+            
+            # Add statistics text box
+            cpu_stats_text = (
+                f'CPU Statistics:\n'
+                f'Mean: {results["mean_cpu"]:.1f}%\n'
+                f'Min: {np.min(results["cpu_usage"]):.1f}%\n'
+                f'Max: {np.max(results["cpu_usage"]):.1f}%\n'
+                f'Std: {np.std(results["cpu_usage"]):.1f}%'
+            )
+            ax.text(0.98, 0.97, cpu_stats_text, transform=ax.transAxes,
+                   fontsize=9, verticalalignment='top', horizontalalignment='right',
+                   bbox=dict(boxstyle='round', facecolor='lavender', alpha=0.5))
+            
+            plt.tight_layout()
+            filename = f"{save_prefix}_cpu_usage.pdf"
+            plt.savefig(filename, format='pdf', dpi=300, bbox_inches='tight')
+            saved_files.append(filename)
+            plt.close(fig)
+        
+        # ========================================================================
+        # PLOT 4: CPU Temperature (if available)
+        # ========================================================================
+        if results['cpu_temp']:
+            fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+            
+            ax.plot(results['cpu_temp'], color='red', alpha=0.7, linewidth=1.5)
+            ax.axhline(results['mean_temp'], color='darkred', linestyle='--', 
+                      linewidth=2, label=f'Mean: {results["mean_temp"]:.1f}°C')
+            
+            # Add fill between for visual effect
+            ax.fill_between(range(len(results['cpu_temp'])), 
+                           results['cpu_temp'], alpha=0.3, color='red')
+            
+            # Add warning zones
+            ax.axhspan(70, 85, alpha=0.1, color='orange', label='Warning zone (70-85°C)')
+            ax.axhspan(85, 100, alpha=0.1, color='red', label='Critical zone (>85°C)')
+            
+            ax.set_xlabel('Iteration', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Temperature (°C)', fontsize=12, fontweight='bold')
+            ax.set_title('CPU Temperature During Benchmark', fontsize=14, fontweight='bold')
+            ax.legend(loc='best', fontsize=10)
+            ax.grid(True, alpha=0.3, linestyle='--')
+            
+            # Add statistics text box
+            temp_stats_text = (
+                f'Temperature Statistics:\n'
+                f'Mean: {results["mean_temp"]:.1f}°C\n'
+                f'Min: {np.min(results["cpu_temp"]):.1f}°C\n'
+                f'Max: {np.max(results["cpu_temp"]):.1f}°C\n'
+                f'Std: {np.std(results["cpu_temp"]):.1f}°C'
+            )
+            ax.text(0.98, 0.97, temp_stats_text, transform=ax.transAxes,
+                   fontsize=9, verticalalignment='top', horizontalalignment='right',
+                   bbox=dict(boxstyle='round', facecolor='mistyrose', alpha=0.5))
+            
+            plt.tight_layout()
+            filename = f"{save_prefix}_cpu_temperature.pdf"
+            plt.savefig(filename, format='pdf', dpi=300, bbox_inches='tight')
+            saved_files.append(filename)
+            plt.close(fig)
+        
+        # ========================================================================
+        # PLOT 5: Summary Dashboard (Combined Overview)
+        # ========================================================================
+        fig = plt.figure(figsize=(12, 10))
+        gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
+        
+        # Subplot 1: Inference time line plot
+        ax1 = fig.add_subplot(gs[0, :])
+        ax1.plot(inference_times_ms, 'o-', color='blue', alpha=0.6, markersize=2)
+        ax1.axhline(results['mean_time']*1000, color='red', linestyle='--', linewidth=2)
+        ax1.set_xlabel('Iteration', fontsize=10)
+        ax1.set_ylabel('Time (ms)', fontsize=10)
+        ax1.set_title('Inference Time per Iteration', fontsize=11, fontweight='bold')
+        ax1.grid(True, alpha=0.3)
+        
+        # Subplot 2: Histogram
+        ax2 = fig.add_subplot(gs[1, 0])
+        ax2.hist(inference_times_ms, bins=30, color='blue', alpha=0.7, edgecolor='black')
+        ax2.axvline(results['mean_time']*1000, color='red', linestyle='--', linewidth=2)
+        ax2.set_xlabel('Time (ms)', fontsize=10)
+        ax2.set_ylabel('Frequency', fontsize=10)
+        ax2.set_title('Distribution', fontsize=11, fontweight='bold')
+        ax2.grid(True, alpha=0.3, axis='y')
+        
+        # Subplot 3: Statistics table
+        ax3 = fig.add_subplot(gs[1, 1])
+        ax3.axis('off')
+        stats_data = [
+            ['Metric', 'Value'],
+            ['Mean', f'{results["mean_time"]*1000:.2f} ms'],
+            ['Std', f'{results["std_time"]*1000:.2f} ms'],
+            ['Min', f'{results["min_time"]*1000:.2f} ms'],
+            ['Max', f'{results["max_time"]*1000:.2f} ms'],
+            ['Median', f'{results["median_time"]*1000:.2f} ms'],
+            ['95th %ile', f'{results["p95_time"]*1000:.2f} ms'],
+            ['99th %ile', f'{results["p99_time"]*1000:.2f} ms'],
+            ['FPS', f'{results["throughput"]:.2f}'],
+        ]
+        table = ax3.table(cellText=stats_data, cellLoc='left', loc='center',
+                         colWidths=[0.5, 0.5])
+        table.auto_set_font_size(False)
+        table.set_fontsize(9)
+        table.scale(1, 2)
+        # Style header row
+        for i in range(2):
+            table[(0, i)].set_facecolor('#4472C4')
+            table[(0, i)].set_text_props(weight='bold', color='white')
+        ax3.set_title('Performance Statistics', fontsize=11, fontweight='bold', pad=20)
+        
+        # Subplot 4: CPU usage (if available)
+        if results['cpu_usage']:
+            ax4 = fig.add_subplot(gs[2, 0])
+            ax4.plot(results['cpu_usage'], color='purple', alpha=0.7, linewidth=1)
+            ax4.axhline(results['mean_cpu'], color='red', linestyle='--', linewidth=2)
+            ax4.fill_between(range(len(results['cpu_usage'])), 
+                            results['cpu_usage'], alpha=0.3, color='purple')
+            ax4.set_xlabel('Iteration', fontsize=10)
+            ax4.set_ylabel('CPU Usage (%)', fontsize=10)
+            ax4.set_title('CPU Usage', fontsize=11, fontweight='bold')
+            ax4.grid(True, alpha=0.3)
+            ax4.set_ylim([0, 100])
+        
+        # Subplot 5: CPU temperature (if available)
+        if results['cpu_temp']:
+            ax5 = fig.add_subplot(gs[2, 1])
+            ax5.plot(results['cpu_temp'], color='red', alpha=0.7, linewidth=1)
+            ax5.axhline(results['mean_temp'], color='darkred', linestyle='--', linewidth=2)
+            ax5.fill_between(range(len(results['cpu_temp'])), 
+                            results['cpu_temp'], alpha=0.3, color='red')
+            ax5.set_xlabel('Iteration', fontsize=10)
+            ax5.set_ylabel('Temperature (°C)', fontsize=10)
+            ax5.set_title('CPU Temperature', fontsize=11, fontweight='bold')
+            ax5.grid(True, alpha=0.3)
+        
+        plt.suptitle('Benchmark Summary Dashboard', fontsize=14, fontweight='bold', y=0.995)
+        filename = f"{save_prefix}_summary_dashboard.pdf"
+        plt.savefig(filename, format='pdf', dpi=300, bbox_inches='tight')
+        saved_files.append(filename)
+        plt.close(fig)
+        
+        # ========================================================================
+        # Print summary
+        # ========================================================================
+        print(f"\n{'='*70}")
+        print(" PDF PLOTS GENERATED ")
+        print(f"{'='*70}")
+        for i, file in enumerate(saved_files, 1):
+            print(f"  {i}. {file}")
+        print(f"{'='*70}\n")
     
     def save_results(self, results: Dict, save_path: str = "benchmark_results.txt"):
         """
@@ -501,8 +664,11 @@ def main():
     
     # Plot results
     if not args.no_plot:
-        plot_file = f"{args.output_prefix}_plot.png"
-        benchmark.plot_results(results, warmup_stats, save_path=plot_file)
+        benchmark.plot_results(
+            results, 
+            warmup_stats, 
+            save_prefix=args.output_prefix  # Changed from save_path
+        )
     
     print("\n Benchmark complete!")
 
