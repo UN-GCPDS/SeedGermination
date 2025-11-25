@@ -131,13 +131,3 @@ python "Testing on RP4/rpi4_benchmark.py" --model Weights/mobilenetv3_unet_dynam
 ## License
 
 This project is licensed under the Apache 2 License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-Maintainer: proyecto open source
-
-## Roadmap
-
-- Add automated tests.
-- Improve documentation.
-- Add setup script for dependencies.
