@@ -2,6 +2,7 @@
 
 ![License](https://img.shields.io/badge/license-BSD%202--Clause-blue)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
+![torch 2.6.0](https://img.shields.io/badge/torch-2.6.0-blue.svg?logo=pytorch&logoColor=white)
 
 A repository for seed germination detection and segmentation using deep learning models (UNet, ResUNet, DeepLabV3), optimized for deployment on Raspberry Pi 4 using LiteRT (TensorFlow Lite).
 
