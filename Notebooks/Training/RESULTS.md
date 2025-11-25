@@ -1,6 +1,6 @@
 ## Segmentation Performance
 
-Segmentation performance (mean values) on the evaluation dataset. CE = Cross-Entropy.
+Segmentation performance (mean values) on the evaluation dataset. CE = Cross-Entropy, C0 Background, C1 Germinated seeds, C2 Non-germinated seeds.
 
 | Model       | Backbone   | Loss    | Dice Global | Dice C0 | Dice C1 | Dice C2 | Jaccard Global | Jaccard C0 | Jaccard C1 | Jaccard C2 | Sens. Global | Sens. C0 | Sens. C1 | Sens. C2 | Spec. Global | Spec. C0 | Spec. C1 | Spec. C2 |
 |------------|------------|---------|-------------|---------|---------|---------|----------------|------------|------------|------------|--------------|----------|----------|----------|--------------|----------|----------|----------|
