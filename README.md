@@ -40,7 +40,7 @@ Located in `Notebooks/Training/`:
 - `unet-seeds.ipynb`: Training process for the U-Net architecture.
 - `resunet-seeds.ipynb`: Training process for the ResUNet architecture.
 - `deeplabv3-seeds.ipynb`: Training process for the DeepLabV3 architecture.
-- `RESULTS.md`: Detailed training description and segmentation performance tables for all evaluated models and loss functions.
+- `README.md`: Detailed training description and segmentation performance tables for all evaluated models and loss functions.
 
 To run these notebooks:
 ```bash
