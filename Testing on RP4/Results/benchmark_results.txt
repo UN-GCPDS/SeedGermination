@@ -1,0 +1,26 @@
+======================================================================
+RASPBERRY PI 4 - LITERT BENCHMARK RESULTS
+======================================================================
+
+Timestamp: 2025-11-25T17:29:54.080913
+Model: /home/gcpds/SeedGermination/Weights/mobilenetv3_unet_dynamic.tflite
+Number of runs: 200
+CPU threads: 4
+
+--- INFERENCE TIME ---
+Mean:      234.23 ms
+Std:       5.48 ms
+Min:       222.91 ms
+Max:       252.53 ms
+Median:    233.67 ms
+95th %ile: 244.52 ms
+99th %ile: 251.02 ms
+
+--- THROUGHPUT ---
+Images/sec: 4.27
+FPS:        4.27
+
+--- RESOURCE USAGE ---
+CPU Usage:    89.4%
+Memory:       176.1 MB
+CPU Temp:     70.9°C
