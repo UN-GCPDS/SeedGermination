@@ -280,6 +280,7 @@ class RPi4Benchmark:
         print(f"\n{'='*70}")
     
     def plot_results(
+            self,
             results: Dict, 
             warmup_stats: Dict = None,
             save_prefix: str = "test_benchmark"
