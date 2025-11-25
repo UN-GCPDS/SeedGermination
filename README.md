@@ -1,6 +1,6 @@
 # SeedGermination
 
-![License](https://img.shields.io/badge/license-BSD%202--Clause-blue)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?logo=apache&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![torch 2.6.0](https://img.shields.io/badge/torch-2.6.0-blue.svg?logo=pytorch&logoColor=white)
 
